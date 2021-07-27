@@ -9,8 +9,8 @@
 #'                  or the patient was censored
 #'
 #' Return:
-#'   json with beta, p-value and confidence interval for each explanatory
-#'   variable. (convert to R data.frame with jsonlite::fromJSON(...))
+#'   RDS with beta, p-value and confidence interval for each explanatory
+#'   variable.
 dcoxph <- function(client, expl_vars, time_col, censor_col) {
 
     MAX_COMPLEXITY = 250000
@@ -136,8 +136,6 @@ dcoxph <- function(client, expl_vars, time_col, censor_col) {
     # results <- dplyr::mutate(results, "Z_2"=round(zvalues2, 2), "P_2"=pvalues2)
     row.names(results) <- rownames(beta)
 
-    results_json = jsonlite::toJSON(results)
-
-    return(results_json)
+    return(results)
 }
 
