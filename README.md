@@ -45,11 +45,8 @@ expl_vars <- c("Age","Race2","Race3","Mar2","Mar3","Mar4","Mar5","Mar9",
 time_col <- "Time"
 censor_col <- "Censor"
 
-input_ = list('expl_vars'=expl_vars, 'time_col'=time_col, 'censor_col'=censor_col)
-
-
 # vtg.coxph contains the function `dcoxph`.
-result <- vtg.coxph::dcoxph(client, input_)
+result <- vtg.coxph::dcoxph(client, expl_vars, time_col, censor_col)
 ```
 
 ## Example use for testing
@@ -64,7 +61,5 @@ expl_vars <- c("Age","Race2","Race3","Mar2","Mar3","Mar4","Mar5","Mar9",
 time_col <- "Time"
 censor_col <- "Censor"
 
-input_ = list('expl_vars'=expl_vars, 'time_col'=time_col, 'censor_col'=censor_col)
-
-result <- vtg.coxph::dcoxph.mock(SEER, input_)
+result <- vtg.coxph::dcoxph.mock(SEER, expl_vars, time_col, censor_col)
 ```
