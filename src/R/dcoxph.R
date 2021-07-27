@@ -2,19 +2,21 @@
 #'
 #' Params:
 #'   client: ptmclient::Client instance.
-#'   expl_vars: list of explanatory variables (covariates) to use
-#'   time_col: name of the column that contains the event/censor times
-#'   censor_col: name of the colunm that explains whether an event occured or
-#'               the patient was censored
+#'   input_data: input_data containing
+#'      expl_vars: list of explanatory variables (covariates) to use
+#'      time_col: name of the column that contains the event/censor times
+#'      censor_col: name of the column that explains whether an event occurred
+#'                  or the patient was censored
 #'
 #' Return:
-#'   data.frame with beta, p-value and confidence interval for each explanatory
+#'   RDS with beta, p-value and confidence interval for each explanatory
 #'   variable.
 dcoxph <- function(client, expl_vars, time_col, censor_col) {
+
     MAX_COMPLEXITY = 250000
     USE_VERBOSE_OUTPUT = getOption('vtg.verbose_output', F)
 
-    image.name <- "harbor.distributedlearning.ai/vantage/vtg.coxph:trolltunga"
+    image.name <- "harbor.vantage6.ai/vantage/vtg.coxph:harukas"
 
     client$set.task.image(
         image.name,
