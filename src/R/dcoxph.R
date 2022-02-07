@@ -16,7 +16,7 @@ dcoxph <- function(client, expl_vars, time_col, censor_col) {
     MAX_COMPLEXITY = 250000
     USE_VERBOSE_OUTPUT = getOption('vtg.verbose_output', F)
 
-    image.name <- "harbor.vantage6.ai/vantage/vtg.coxph:harukas"
+    image.name <- "harbor2.vantage6.ai/algorithms/vtg.coxph:harukas"
 
     client$set.task.image(
         image.name,
@@ -138,4 +138,3 @@ dcoxph <- function(client, expl_vars, time_col, censor_col) {
 
     return(results)
 }
-
