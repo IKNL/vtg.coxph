@@ -129,7 +129,8 @@ dcoxph <- function(client, expl_vars, time_col, censor_col) {
     pvalues <- format.pval(pvalues, digits = 1)
 
     # 95%CI = beta +- 1.96 * SE
-    results <- data.frame("coef"=round(beta,5), "exp(coef)"=round(exp(beta), 5), "SE"=round(SErrors,5))
+    results <- data.frame("coef"=round(beta,5), "exp(coef)"=round(exp(beta), 5)
+                          , "SE"=round(SErrors,5), "var"=fisher)
     results <- dplyr::mutate(results, lower_ci=round(exp(coef - 1.96 * SE), 5))
     results <- dplyr::mutate(results, upper_ci=round(exp(coef + 1.96 * SE), 5))
     results <- dplyr::mutate(results, "Z"=round(zvalues, 2), "P"=pvalues)
