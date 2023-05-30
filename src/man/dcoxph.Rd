@@ -4,7 +4,7 @@
 \alias{dcoxph}
 \title{Run the distributed CoxPH algorithm.}
 \usage{
-dcoxph(client, input_data)
+dcoxph(client, expl_vars, time_col, censor_col)
 }
 \description{
 Params:
@@ -17,6 +17,6 @@ Params:
 }
 \details{
 Return:
-  json with beta, p-value and confidence interval for each explanatory
-  variable. (convert to R data.frame with jsonlite::fromJSON(...))
+  RDS with beta, p-value and confidence interval for each explanatory
+  variable.
 }
