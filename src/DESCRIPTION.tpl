@@ -7,7 +7,8 @@ Description: This package can be used with the vantage6 federated
 Author:
     Frank Martin <f.martin@iknl.nl>,
     Gijs Geleijnse <g.geleijnse@iknl.nl>,
-    Melle Sieswerda <m.sieswerda@iknl.nl>
+    Melle Sieswerda <m.sieswerda@iknl.nl>,
+    Hasan Alradhi <h.alradhi@iknl.nl>
 Maintainer: Melle Sieswerda <m.sieswerda@iknl.nl>
 License: MIT
 Encoding: UTF-8
@@ -16,10 +17,10 @@ Imports:
     glue,
     httr,
     rjson,
-    dplyr (<= 0.8.4),
+    dplyr,
     vtg
 Remotes:
-    mellesies/vtg
+    iknl/vtg
 RoxygenNote: 7.0.0
 
 

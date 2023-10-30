@@ -25,7 +25,8 @@ dcoxph <- function(client, expl_vars, time_col, censor_col) {
 
     # Run in a MASTER container
     if (client$use.master.container) {
-        vtg::log$debug("Running `dcoxph` in master container using image '{image.name}'")
+        vtg::log$debug("Running `dcoxph` in master container using image
+                        '{image.name}'")
         result <- client$call("dcoxph", expl_vars, time_col, censor_col)
         return(result)
     }
@@ -35,7 +36,8 @@ dcoxph <- function(client, expl_vars, time_col, censor_col) {
 
     # Ask all nodes to return their unique event times with counts
     vtg::log$debug("Getting unique event times and counts")
-    results <- client$call("get_unique_event_times_and_counts", time_col, censor_col)
+    results <- client$call("get_unique_event_times_and_counts", time_col,
+                           censor_col)
 
     Ds <- lapply(results, as.data.frame)
 
@@ -48,20 +50,23 @@ dcoxph <- function(client, expl_vars, time_col, censor_col) {
     vtg::log$debug("********************************************")
 
     if (complexity > MAX_COMPLEXITY) {
-        stop("*** This computation will be too heavy on the nodes! Aborting! ***")
+        stop("*** This computation will be too heavy on the nodes! Aborting!
+              ***")
     }
 
     # Ask all nodes to compute the summed Z statistic
     vtg::log$debug("Getting the summed Z statistic")
-    summed_zs <- client$call("compute_summed_z", expl_vars, time_col, censor_col)
+    summed_zs <- client$call("compute_summed_z", expl_vars, time_col,
+                             censor_col)
 
     # z_hat: vector of same length m
-    # Need to jump through a few hoops because apply simplifies a matrix with one row
-    # to a numeric (vector) :@
-    z_hat <- list.to.matrix(summed_zs)
-    z_hat <- apply(z_hat, 2, as.numeric)
-    z_hat <- matrix(z_hat, ncol=m, dimnames=list(NULL, expl_vars))
-    z_hat <- colSums(z_hat)
+    # Need to jump through a few hoops because apply simplifies a matrix
+    # with one row to a numeric (vector) :@
+    # z_hat <- list.to.matrix(summed_zs)
+    # z_hat <- apply(z_hat, 2, as.numeric)
+    # z_hat <- matrix(z_hat, ncol=m, dimnames=list(NULL, expl_vars))
+    # z_hat <- colSums(z_hat)
+    z_hat <- Reduce(`+`, summed_zs)
 
     # Initialize the betas to 0 and start iterating
     vtg::log$debug("Starting iterations ...")
@@ -81,7 +86,8 @@ dcoxph <- function(client, expl_vars, time_col, censor_col) {
             writeln()
         }
 
-        aggregates <- client$call("perform_iteration", expl_vars, time_col, censor_col, beta, unique_event_times)
+        aggregates <- client$call("perform_iteration", expl_vars, time_col,
+                                  censor_col, beta, unique_event_times)
 
         # Compute the primary and secondary derivatives
         derivatives <- compute.derivatives(z_hat, D_all, aggregates)
@@ -89,7 +95,8 @@ dcoxph <- function(client, expl_vars, time_col, censor_col) {
 
         # Update the betas
         beta_old <- beta
-        beta <- beta_old - (solve(derivatives$secondary) %*% derivatives$primary)
+        beta <- beta_old - (solve(derivatives$secondary) %*%
+                                derivatives$primary)
 
         delta <- abs(sum(beta - beta_old))
 
@@ -129,11 +136,14 @@ dcoxph <- function(client, expl_vars, time_col, censor_col) {
     pvalues <- format.pval(pvalues, digits = 1)
 
     # 95%CI = beta +- 1.96 * SE
-    results <- data.frame("coef"=round(beta,5), "exp(coef)"=round(exp(beta), 5), "SE"=round(SErrors,5))
+    results <- data.frame("coef"=round(beta,5), "exp(coef)"=round(exp(beta), 5)
+                          , "SE"=round(SErrors,5))
     results <- dplyr::mutate(results, lower_ci=round(exp(coef - 1.96 * SE), 5))
     results <- dplyr::mutate(results, upper_ci=round(exp(coef + 1.96 * SE), 5))
     results <- dplyr::mutate(results, "Z"=round(zvalues, 2), "P"=pvalues)
-    # results <- dplyr::mutate(results, "Z_2"=round(zvalues2, 2), "P_2"=pvalues2)
+    results$var <- as.matrix(round(fisher, 5))
+    # results <- dplyr::mutate(results, "Z_2"=round(zvalues2, 2),
+    # "P_2"=pvalues2)
     row.names(results) <- rownames(beta)
 
     return(results)
